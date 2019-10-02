@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+  
+  <!--플랫폼에 맞게 제품 ID를 설정하는 코드 추가-->
+  <!--define이 변수 설정-->
+  <!--$: 변수 사용-->
+  <!--var: 변수-->
+  <?if $(var.Platform)=x64?>
+  <!--버전이 올라갈 때마다 이 버전을 변경해야 한다-->
+  <?define ProductCode = "{140301C5-E8DE-4328-A964-BC3A9A23984A}" ?>
+  <?else?>
+  <?define ProductCode = "{6A4D82C9-AA30-445D-BD0E-7A1AA13BFC06}" ?>
+  <?endif?>
+
+  <!--같은 제품일 경우에는 이 코드가 계속 같아야 한다-->
+  <?define UpgradeCode = "{693B706B-DA86-4E28-B9E2-CE2151BE8953}" ?>
+  
+  <?define BuildVersion = 1.2.3.4 ?>
+  
+  <!--메인 프로덕트 설정-->
+	<Product Id="$(var.ProductCode)" 
+           Name="!(loc.ProductName_$(var.Platform))" 
+           Language="!(loc.Language)" 
+           Version="$(var.BuildVersion)" 
+           Manufacturer="!(loc.Company)" 
+           UpgradeCode="$(var.UpgradeCode)">
+    
+    <!--프로그램 추가 삭제에서 보여주는 패치키의 정보를 설정-->
+		<Package InstallerVersion="200" 
+             Compressed="yes" 
+             InstallScope="perMachine" 
+             Platform="$(var.Platform)"
+             Manufacturer="!(loc.Company)"
+             Description="!(loc.Description)"
+             Keywords="!(loc.Keywords)"
+             Comments="!(loc.Comments)"
+             Languages="!(loc.Language)"
+             />
+
+    <!--PC에 설치되어 있는 것이 더 최신의 버전일 경우에는 에러 메시지 출력-->
+		<MajorUpgrade DowngradeErrorMessage="!(loc.DowngradeErrorMessage)" />
+
+    <!--Include .cab file into .msi file -->
+		<MediaTemplate EmbedCab="yes" />
+
+    <!--아이콘 파일 설정-->
+    <Icon Id="icon.ico" SourceFile="$(var.ConsoleApp1.ProjectDir)\app.ico"/>
+    
+    <!--프로그램에서 설정한 아이콘 파일을 사용-->
+    <Property Id="ARPPRODUCTICON">icon.ico</Property>
+    <!--Help/Support Website-->
+    <Property Id="ARPURLINFOABOUT">http://www.naver.com</Property>
+
+    <!-- Basic UI-->
+    <UIRef Id="WixUI_Minimal" />
+    
+    <!-- Change installer UI backgroud images-->
+    <!-- 정해진 변수명-->
+    <WixVariable Id="WixUILicenseRtf" Value="$(var.ProjectDir)\Assets\License.rtf"/>
+    <WixVariable Id="WixUIDialogBmp" Value="$(var.ProjectDir)\Assets\Background.bmp"/>
+    <WixVariable Id="WixUIBannerBmp" Value="$(var.ProjectDir)\Assets\Banner.bmp"/>
+    
+    <!--Define components, shorcuts, files etc for installer-->
+		<Feature Id="ProductFeature" Title="ConsoleApp" Level="1">
+			
+      <ComponentGroupRef Id="ProductComponents" />
+      
+		</Feature>
+	</Product>
+
+</Wix>
